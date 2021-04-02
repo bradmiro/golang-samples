@@ -29,13 +29,14 @@ func TestInstantiateInlineWorkflowTemplate(t *testing.T) {
 	region := "us-central1"
 
 	buf := new(bytes.Buffer)
+	testutil.Retry(t, 5, 60*time.Second, func(r *testutil.R) {
+		if err := instantiateInlineWorkflowTemplate(buf, tc.ProjectID, region); err != nil {
+			t.Fatalf("instantiateInlineWorkflowTemplate got err: %v", err)
+		}
 
-	if err := instantiateInlineWorkflowTemplate(buf, tc.ProjectID, region); err != nil {
-		t.Fatalf("instantiateInlineWorkflowTemplate got err: %v", err)
-	}
-
-	got := buf.String()
-	if want := fmt.Sprintf("successfully"); !strings.Contains(got, want) {
-		t.Fatalf("instantiateInlineWorkflowTemplate got %q, want %q", got, want)
-	}
+		got := buf.String()
+		if want := fmt.Sprintf("successfully"); !strings.Contains(got, want) {
+			t.Fatalf("instantiateInlineWorkflowTemplate got %q, want %q", got, want)
+		}
+	})
 }
